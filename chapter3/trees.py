@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+'''
+ID3算法
+'''
+
 from math import log
 import operator
 
@@ -87,26 +91,26 @@ def createTree(dataSet,labels):
         myTree[bestFeatLabel][uf] = createTree(sds,subLabels)
     return myTree
 
-
+# 递归查找决策树的相应叶子结点，完成分类
 def classify(inTree,labels,testVec):
     root = inTree.keys()[0]
     subTree = inTree[root]
     featIndex = labels.index(root)
     testVal = testVec[featIndex]
-    if type(subTree[testVal]).__name__ == 'dict':
+    if type(subTree[testVal]).__name__ == 'dict': # 如果有子树，则递归查找
         classLabel = classify(subTree[testVal],labels,testVec)
-    else:
+    else: # 如果是叶子结点，则为所求分类
         classLabel = subTree[testVal]
     return classLabel
 
-
+# 序列化dict
 def storeTree(inTree,filename):
     import pickle
     fw = open(filename,'w')
     pickle.dump(inTree,fw)
     fw.close()
 
-
+# 反序列化dict
 def grabTree(filename):
     import pickle
     fr = open(filename)
