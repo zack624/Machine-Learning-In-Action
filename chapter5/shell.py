@@ -14,3 +14,7 @@ logRegres.plotBestFit(wei2)
 
 wei3 = logRegres.stocGradAscent1(array(data),ls)
 logRegres.plotBestFit(wei3)
+
+
+import logRegres
+logRegres.multiTest()
