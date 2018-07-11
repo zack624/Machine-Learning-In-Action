@@ -21,3 +21,43 @@ xMat = mat(dm)
 yMat = mat(ls)
 yHat = xMat*ws
 corrcoef(yHat.T,yMat) # 求相关系数
+
+# 局部加权线性回归
+import regression
+from numpy import *
+dm,ls = regression.loadDataSet('ex0.txt')
+ls[0]
+regression.lwlr(dm[0],dm,ls,1.0)
+yHat = regression.lwlrTest(dm,dm,ls,0.01)
+
+xMat = mat(dm)
+strInd = xMat[:,1].argsort(0)
+xSort = xMat[strInd][:,0,:]
+import matplotlib.pyplot as plt
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.plot(xSort[:,1],yHat[strInd])
+ax.scatter(xMat[:,1].flatten().A[0],mat(ls).T.flatten().A[0],s=2,c='red')
+plt.show()
+
+# 预测鲍鱼寿命
+import regression
+from numpy import *
+abX,abY = regression.loadDataSet('abalone.txt')
+yHat01 = regression.lwlrTest(abX[0:99],abX[0:99],abY[0:99],0.1)
+yHat1 = regression.lwlrTest(abX[0:99],abX[0:99],abY[0:99],1)
+yHat10 = regression.lwlrTest(abX[0:99],abX[0:99],abY[0:99],10)
+regression.rssError(abY[0:99],yHat01.T)
+regression.rssError(abY[0:99],yHat1.T)
+regression.rssError(abY[0:99],yHat10.T)
+
+yHat01 = regression.lwlrTest(abX[100:199],abX[0:99],abY[0:99],0.1)
+regression.rssError(abY[100:199],yHat01.T)
+yHat1 = regression.lwlrTest(abX[100:199],abX[0:99],abY[0:99],1)
+regression.rssError(abY[100:199],yHat1.T)
+yHat10 = regression.lwlrTest(abX[100:199],abX[0:99],abY[0:99],10)
+regression.rssError(abY[100:199],yHat10.T)
+
+ws = regression.standRegres(abX[0:99],abY[0:99])
+yHat = mat(abX[100:199])*ws
+regression.rssError(abY[100:199],yHat.T.A)
