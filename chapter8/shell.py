@@ -61,3 +61,25 @@ regression.rssError(abY[100:199],yHat10.T)
 ws = regression.standRegres(abX[0:99],abY[0:99])
 yHat = mat(abX[100:199])*ws
 regression.rssError(abY[100:199],yHat.T.A)
+
+# 岭回归
+import regression
+dm,ls = regression.loadDataSet('abalone.txt')
+ridgeWeights = regression.ridgeTest(dm,ls)
+import matplotlib.pyplot as plt
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.plot(ridgeWeights)
+plt.show()
+
+# 前向逐步回归
+import regression
+from numpy import *
+dm,ls = regression.loadDataSet('abalone.txt')
+wMat = regression.stageWise(dm,ls,0.01,200)
+wMat = regression.stageWise(dm,ls,0.001,5000)
+xMat = mat(dm)
+yMat = mat(ls).T
+xMat = (xMat - mean(xMat,0))/var(xMat,0)
+yMat = yMat - mean(yMat,0)
+regression.standRegres(xMat,yMat.T).T

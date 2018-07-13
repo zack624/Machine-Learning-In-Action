@@ -52,3 +52,59 @@ def lwlrTest(testArr,xArr,yArr,k=1.0):
 
 def rssError(yArr,yHatArr):
     return ((yArr - yHatArr)**2).sum()
+
+# 岭回归
+def ridgeRegres(xMat,yMat,lam=0.2):
+    xTx = xMat.T * xMat
+    denom = xTx + eye(shape(xMat)[1]) * lam
+    if linalg.det(denom) == 0:
+        print "This matrix is singular, cannot do inverse"
+        return
+    ws = denom.I * (xMat.T * yMat)
+    return ws
+
+
+def ridgeTest(xArr,yArr):
+    xMat = mat(xArr); yMat = mat(yArr).T
+    yMean = mean(yMat,0) # mean函数求均值，axis=0即求各行某列的均值
+    yMat = yMat - yMean
+    xMeans = mean(xMat,0)
+    xVar = var(xMat,0) # var函数求方差
+    xMat = (xMat - xMeans)/xVar # 数据标准化
+    numTestPts = 30
+    wMat = zeros((numTestPts,shape(xMat)[1]))
+    for i in range(numTestPts):
+        ws = ridgeRegres(xMat,yMat,exp(i-10))
+        wMat[i,:] = ws.T
+    return wMat
+
+# 前向逐步回归,eps为步长，numIt为迭代次数
+def stageWise(xArr,yArr,eps=0.01,numIt=100):
+    xMat = mat(xArr); yMat = mat(yArr).T
+    yMean = mean(yMat,0)
+    yMat = yMat - yMean
+# xMat = regularize(xMat)
+    xMeans = mean(xMat,0)
+    xVar = var(xMat,0)
+    xMat = (xMat - xMeans)/xVar
+    m,n = shape(xMat)
+    returnMat = zeros((numIt,n))
+    ws = zeros((n,1)); wsTest = ws.copy(); wsMat = ws.copy()
+    for i in range(numIt):
+        # print ws.T
+        lowestError = inf;
+        for j in range(n):
+            for sign in [-1,1]:
+                wsTest = ws.copy()
+                wsTest[j] += eps*sign
+                yTest = xMat * wsTest
+                rssE = rssError(yMat.A,yTest.A)
+                if rssE < lowestError:
+                    lowestError = rssE
+                    wsMat = wsTest
+        ws = wsMat.copy()
+        returnMat[i,:] = ws.T
+    return returnMat
+
+
+
