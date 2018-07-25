@@ -83,3 +83,17 @@ yMat = mat(ls).T
 xMat = (xMat - mean(xMat,0))/var(xMat,0)
 yMat = yMat - mean(yMat,0)
 regression.standRegres(xMat,yMat.T).T
+
+
+import regression
+regression.setDataCollect()
+
+
+import regression
+from numpy import *
+lgx,lgy = regression.loadLEGOData('out.txt')
+# ws = regression.standRegres(lgx,lgy)
+# lgx = mat(lgx)
+# lgx[0] * ws
+ws = regression.crossValidation(lgx,lgy,10)
+regression.ridgeTest(lgx,lgy)
