@@ -96,4 +96,59 @@ def prune(tree, test_data):
     else: return tree
 
 
+def linear_solve(dataset):
+    m, n = shape(dataset)
+    x = mat(ones((m, n)))
+    y = mat(ones((m, 1)))
+    x[:, 1:n] = dataset[:, 0:n-1]
+    y = dataset[:, -1]
+    xtx = x.T * x
+    if linalg.det(xtx) == 0:
+        raise NameError('This matrix is singular, cannot do inverse,\n\
+            try increasing the second value of ops')
+    ws = xtx.I * (x.T * y)
+    return ws, x, y
 
+
+def model_leaf(dataset):
+    ws, x, y = linear_solve(dataset)
+    return ws
+
+
+def model_err(dataset):
+    ws, x, y = linear_solve(dataset)
+    yhat = x * ws
+    return sum(power(y-yhat, 2))
+
+
+def reg_tree_eval(model, indat):
+    return float(model)
+
+
+def model_tree_eval(model, indat):
+    n = shape(indat)[1]
+    x = mat(ones((1, n+1)))
+    x[:, 1:n+1] = indat
+    return float(x * model)
+
+
+def tree_forecast(tree, indata, model_eval=reg_tree_eval):
+    if not is_tree(tree): return model_eval(tree, indata)
+    if indata[tree['sp_ind']] > tree['sp_val']:
+        if is_tree(tree['left']):
+            return tree_forecast(tree['left'], indata, model_eval)
+        else:
+            return model_eval(tree['left'], indata)
+    else:
+        if is_tree(tree['right']):
+            return tree_forecast(tree['right'], indata, model_eval)
+        else:
+            return model_eval(tree['right'], indata)
+
+
+def create_forecast(tree, test_data, model_eval=reg_tree_eval):
+    m = len(test_data)
+    yhat = mat(zeros((m, 1)))
+    for i in range(m):
+        yhat[i, 0] = tree_forecast(tree, mat(test_data[i]), model_eval)
+    return yhat
