@@ -38,7 +38,16 @@ from numpy import *
 import matplotlib.pyplot as plt
 fig = plt.figure()
 ax = fig.add_subplot(111)
-my_dat = mat(regTrees.load_data_set('exp2.txt'))
-ax.scatter(my_dat[:,0].T.tolist()[0],my_dat[:,-1].T.tolist()[0],s=30)
+my_dat = mat(regTrees.load_data_set('ex00.txt'))
+ax.scatter(my_dat[:,0].T.tolist()[0], my_dat[:,-1].T.tolist()[0], s=30)
 plt.xlabel('X'); plt.ylabel('Y')
 plt.show()
+
+
+########
+
+from Tkinter import *
+root = Tk()
+my_label = Label(root, text="Hello World!")
+my_label.grid()
+root.mainloop()

@@ -30,7 +30,7 @@ def reg_err(dataset):
     return var(dataset[:, -1]) * shape(dataset)[0]
 
 
-def create_tree(dataset, leaf_type=reg_leaf, err_type=reg_err, ops=(1,4)):
+def create_tree(dataset, leaf_type=reg_leaf, err_type=reg_err, ops=(1, 4)):
     feat, val = choose_best_split(dataset, leaf_type, err_type, ops)
     if feat is None: return val
     ret_tree = {}
