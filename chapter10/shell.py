@@ -7,6 +7,8 @@ datmat = mat(Kmeans.load_data_set('testSet.txt'))
 # Kmeans.rand_cent(datmat, 2)
 cens, censa = Kmeans.kmeans(datmat, 4)
 
+datmat2 = mat(Kmeans.load_data_set('testSet2.txt'))
+cens, censa = Kmeans.bikmeans(datmat2, 3)
 
 ########
 
