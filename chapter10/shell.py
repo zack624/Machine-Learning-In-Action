@@ -10,6 +10,7 @@ cens, censa = Kmeans.kmeans(datmat, 4)
 datmat2 = mat(Kmeans.load_data_set('testSet2.txt'))
 cens, censa = Kmeans.bikmeans(datmat2, 3)
 
+Kmeans.cluster_clubs(5)
 ########
 
 import Kmeans

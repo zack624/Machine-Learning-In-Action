@@ -94,3 +94,43 @@ def bikmeans(dataset, k, dist_meas=dist_eclud):
         # for j in range(len(best_new_cluster_assment)):
         #     cluster_assment[curr_cluster_point_index[j], :] = best_new_cluster_assment[j, :]
     return mat(cents), cluster_assment
+
+
+# spherical law of cosines
+def dist_SLC(veca, vecb):
+    a = sin(veca[0, 1]*pi/180) * sin(vecb[0, 1]*pi/180)
+    b = cos(veca[0, 1]*pi/180) * cos(vecb[0, 1]*pi/180) * cos(pi*(vecb[0, 0] - veca[0, 0])/180)
+    return arccos(a + b) * 6371.0
+
+
+# apply bikmeans and plot all the points
+import matplotlib
+import matplotlib.pyplot as plt
+def cluster_clubs(num_cluster=5):
+    # load data of longitude and latitude from places.txt
+    dat_list = []
+    fr = open('places.txt')
+    for line in fr.readlines():
+        cur_line = line.split('\t')
+        dat_list.append([float(cur_line[4]), float(cur_line[3])])
+    dat_mat = mat(dat_list)
+    centroids, cluster_assment = bikmeans(dat_mat, num_cluster, dist_meas=dist_SLC)
+    # plot points and centroids
+    fig = plt.figure()
+    rect = [0.1, 0.1, 0.8, 0.8] # left,bottom,width,height
+    scatter_markers = ['s', 'o', '^', '8', 'p', 'd', 'v', 'h', '>', '<']
+    # load Portland.png
+    axprops = dict(xticks=[], yticks=[])
+    ax0 = fig.add_axes(rect, label='ax0', **axprops)
+    imgp = plt.imread('Portland.png')
+    ax0.imshow(imgp)
+    # plot points of every cluster and centroids
+    ax1 = fig.add_axes(rect, label='ax1', frameon=False)
+    for i in range(num_cluster):
+        pts_in_curr_cluster = dat_mat[nonzero(cluster_assment[:, 0].A==i)[0], :]
+        marker_style = scatter_markers[i % len(scatter_markers)]
+        ax1.scatter(pts_in_curr_cluster[:, 0].flatten().A[0],\
+                    pts_in_curr_cluster[:, 1].flatten().A[0], marker=marker_style, s=90)
+    ax1.scatter(centroids[:, 0].flatten().A[0],\
+                centroids[:, 1].flatten().A[0], marker='+', s=300)
+    plt.show()
