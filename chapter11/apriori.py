@@ -63,7 +63,7 @@ def apriori_gen(Lk, k):
     return Ci
 
 
-def apriori(dataset, min_support=0.5):
+def find_freq_set(dataset, min_support=0.5):
     # generate L1
     D = map(set, dataset)
     C1 = create_c1(dataset)
@@ -107,10 +107,10 @@ def calc_conf(freq_set, H, support_data, brl, min_conf=0.7):
 
 
 def rules_from_conseq(freq_set, H, support_data, brl, min_conf=0.7):
-    # get the len of first item of H
     m = len(H[0])
-    if len(freq_set) > (m + 1):
-        Hmp1 = apriori_gen(H, m+1)
-        Hmp1 = calc_conf(freq_set, Hmp1, support_data, brl, min_conf)
-        if len(Hmp1) > 1:
+    if len(freq_set) > m:
+        Hmp1 = calc_conf(freq_set, H, support_data, brl, min_conf)
+        Hmp1 = apriori_gen(Hmp1, m+1)
+        print "Hmp1:", Hmp1
+        if len(Hmp1) > 0:
             rules_from_conseq(freq_set, Hmp1, support_data, brl, min_conf)
